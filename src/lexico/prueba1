@@ -1,0 +1,78 @@
+package lexico;
+
+%%
+
+%class Numeros
+%unicode
+%public
+
+%standalone
+
+%init{
+    //esto va al constructor
+    this.contador=new Contador();
+%init}
+%{
+    //definicion de metodos
+
+    // definir propiedades
+    public static Contador contador;
+
+
+%}
+
+
+LineTerminator =\r|\n|\r\n
+WithSpace = {LineTerminator} | [ \t\f]
+Texto=[a-zA-Z][a-zA-Z]*
+Decimal=0 | [1-9][0-9]*
+Hexadecimal=0[xX]({Decimal} | [a-fA-F][a-fA-F]*)+
+NoDecimal = ({Decimal}[a-zA-Z]+)+
+SaltoIaL = \(
+SaltoLaI = \)
+SaltoHaD = \}
+SaltoDaH = \{
+%state HEXA
+%xstate BIN
+%state LETRA
+
+%%
+    
+{WithSpace} { 
+                //System.out.println("Encontre un espacio");
+            }
+<YYINITIAL>
+{
+    {NoDecimal}
+                {
+                    System.out.println("Número incorrecto: "+yytext());
+                }
+    {Decimal}   {
+                    System.out.println("Encontre un numero "+yytext());
+                    contador.addDecimal();
+                }
+    {SaltoDaH}  {
+                yybegin(HEXA);
+                }
+    {SaltoIaL}
+                {
+                yybegin(LETRA);
+                } 
+
+}
+<LETRA> {Texto} {
+                System.out.println("Encontre un texto "+yytext());
+               }
+<LETRA> {SaltoLaI} {
+                    yybegin(YYINITIAL);
+                   }
+<HEXA> {Hexadecimal}
+                { System.out.println("Encontre un hexa "+yytext());}
+<HEXA> {SaltoHaD} {
+                yybegin(YYINITIAL);
+                }
+.           { }
+
+/* Ejecucion
+ java -jar jflex.jar
+*/

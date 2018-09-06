@@ -1,0 +1,127 @@
+package lexico;
+
+/* comentarios de la clase */
+
+%%
+
+%class Numeros 
+%unicode
+%public
+%unicode
+%column
+%line
+
+%standalone
+
+LineTerminator = \r|\n|\r\n /*(terminadores de linea en windows, linux y mac)*/
+WhiteSpace = {LineTerminator} | [ \t\f] | [\r?$]
+
+Li = I
+Lv = V
+Lx = X
+L50 = L
+L100 = C
+
+L20 = {Lx}{Lx}
+L30 = {Lx}{Lx}{Lx}
+L40 = {Lx}{L50}
+
+L90 = {Lx}{L100}
+L2o3 = {Li}{2,3}
+L4o9 = {Li}{Lv}|{Li}{Lx} 
+L6o7o8 = {Lv}{Li}|{Lv}{L2o3}
+L1a9 = {Li}|{L2o3}|{L4o9}|{Lv}|{L6o7o8}
+L10a19 = {Lx}|{Lx}{L1a9}
+L1a19 = {L1a9} | {L10a19}
+L1a39 = {L1a19}|{L20}|{L20}{L1a9}|{L30}|{L30}{L1a9}
+L40a49 = {L40}|{L40}{L1a9}  
+L1a50 = {L1a39}|{L40a49}|{L50}
+L1a90 = {L1a50}|{L50}{L1a39}|{L90}
+L1a100 = {L1a90}|{L90}{L1a9}|{L100}
+
+/*Lenguajes no reconocidos*/
+
+Lnr1 = {Li}{Lx}{Li}
+Lnr2 = {Lv}{Li}{Lv}
+Lnr3 = {Lv}{Li}{Lx}
+Lnr4 = {Li}{Li}{Li}({Li}+)
+Lnr5 = {Lv}({Lv}+)
+Lnr6 = {L30}({Lx}+)
+Lnr7 = {L50}({L50}+)
+Lnr8 = {L100}({L1a100}+)
+Lnr9 = {Lv}{L50}
+Lnr10 = {Lv}{L100}
+Lnr11 = {L50}{L100}
+Lnr12 = {Li}{L50}
+Lnr13 = {Li}{L100}
+Lnr14 = {Lx}{L50}{Lx}
+Lnr15 = {Li}{Lx}{Lx}+
+Lnr = {Lnr1}|{Lnr2}|{Lnr3}|{Lnr4}|{Lnr5}|{Lnr6}|{Lnr7}|{Lnr8}|{Lnr9}|{Lnr10}|{Lnr11}|{Lnr12}|{Lnr13}|{Lnr14}|{Lnr15}
+
+Decimal = 0 | [1-9][1-9]*
+Hexadecimal = 0[xX]({Decimal}|[a-fA-F])+
+Octal = [0-7]+[oO]
+Binario = [0-1]+[bB]
+Numeros = {Decimal}|{Hexadecimal}|{Octal}|{Binario}
+
+/*NO RECONOCIDOS*/
+LNnr1 = [g-zG-Z]
+LNnr2 = ({Decimal}[a-fA-F] | [a-fA-F]{Decimal} | [a-fA-F])
+LNnr3 = [1-7]*[8-9][1-7]*[oO]
+LNnr4 = [0-1]*[2-9][0-1]*[bB]
+LNnr5 = 0[xX](({Decimal}|a-fA-F)*[g-zG-Z]({Decimal}|a-fA-F)*)+
+LNnr6 = ({Hexadecimal}|{Octal}|{Binario})({Hexadecimal}|{Octal}|{Binario})+
+LNnr = {LNnr1}|{LNnr2}|{LNnr3}|{LNnr4}|{LNnr5}|{LNnr6}
+
+
+%init{
+    // Esto va al constructor
+
+    this.contador = new Contador();
+    this.conv=new Convertir();
+%init}
+
+%{
+    //Definir metodos
+
+    //Definir propiedades
+    public static Contador contador;
+    public static Convertir conv;
+
+%}
+
+%%
+
+({Lnr}*{L1a100}*{Lnr}*)         {   
+                                    System.out.println("Error en la linea: " + (yyline+1) + " Columna: " + (yycolumn+1));
+                                    System.out.println("El error es: " + yytext());
+                                }
+
+{L1a100}{WhiteSpace}            {
+                                                                System.out.println("Encontre un romano: " + yytext()+"Decimal: "+conv.Convertir2(yytext()));
+
+                                    System.out.println();
+                                }
+
+({Numeros}*{LNnr}+{Numeros}*)+  {
+                                    System.out.println("Error en la linea: " + (yyline+1));
+                                    System.out.println("El error es: " + yytext());
+                                }
+
+{Binario}{WhiteSpace}           {
+                                    contador.addBinario();
+                                }
+
+{Octal}{WhiteSpace}             {
+                                    contador.addOctal();
+                                }
+
+{Decimal}{WhiteSpace}           {
+                                    contador.addDecimal();
+                                }
+
+{Hexadecimal}{WhiteSpace}       {
+                                    contador.addHexadecimal();
+                                }
+
+.                               { }
