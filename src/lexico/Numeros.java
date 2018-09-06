@@ -52,11 +52,11 @@ public class Numeros {
   private static final int [] ZZ_ACTION = zzUnpackAction();
 
   private static final String ZZ_ACTION_PACKED_0 =
-    "\4\0\1\1\2\2\2\3\1\4\1\5\1\6\1\1"+
-    "\1\7\1\10\1\11\3\0\1\12";
+    "\4\0\1\1\2\2\1\3\2\4\1\5\1\6\1\7"+
+    "\1\10\2\11\1\12\1\13\2\3\2\0\1\11\1\14";
 
   private static int [] zzUnpackAction() {
-    int [] result = new int[20];
+    int [] result = new int[24];
     int offset = 0;
     offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);
     return result;
@@ -82,11 +82,11 @@ public class Numeros {
 
   private static final String ZZ_ROWMAP_PACKED_0 =
     "\0\0\0\16\0\34\0\52\0\70\0\106\0\70\0\124"+
-    "\0\142\0\70\0\70\0\70\0\160\0\70\0\176\0\214"+
-    "\0\232\0\124\0\250\0\232";
+    "\0\142\0\160\0\70\0\70\0\70\0\176\0\214\0\232"+
+    "\0\70\0\250\0\142\0\266\0\304\0\322\0\304\0\322";
 
   private static int [] zzUnpackRowMap() {
-    int [] result = new int[20];
+    int [] result = new int[24];
     int offset = 0;
     offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result);
     return result;
@@ -109,17 +109,18 @@ public class Numeros {
   private static final int [] ZZ_TRANS = zzUnpackTrans();
 
   private static final String ZZ_TRANS_PACKED_0 =
-    "\1\5\1\6\2\7\1\5\1\10\1\11\2\5\1\12"+
-    "\2\5\1\13\1\14\1\5\1\6\2\7\1\5\1\15"+
-    "\5\5\1\16\1\5\17\14\1\5\1\6\2\7\1\17"+
-    "\2\5\2\17\1\5\1\16\2\5\1\14\20\0\1\7"+
-    "\17\0\1\20\2\0\2\20\11\0\1\20\2\11\2\20"+
-    "\14\0\1\21\12\0\1\17\2\0\2\17\11\0\1\20"+
-    "\1\22\1\23\2\20\12\0\2\24\1\0\1\24\11\0"+
-    "\1\20\2\23\2\20\5\0";
+    "\1\5\1\6\2\7\1\10\1\11\1\12\2\10\1\13"+
+    "\2\5\1\14\1\15\1\5\1\6\2\7\1\16\1\17"+
+    "\1\20\2\16\2\5\1\21\1\5\17\15\1\5\1\6"+
+    "\2\7\1\22\1\23\1\24\2\22\1\5\1\21\2\5"+
+    "\1\15\20\0\1\7\17\0\1\10\2\0\2\10\14\0"+
+    "\1\25\13\0\2\12\13\0\1\16\2\0\2\16\14\0"+
+    "\1\26\13\0\2\20\13\0\1\22\2\0\2\22\12\0"+
+    "\2\24\14\0\2\27\1\0\1\27\12\0\2\30\1\0"+
+    "\1\30\5\0";
 
   private static int [] zzUnpackTrans() {
-    int [] result = new int[182];
+    int [] result = new int[224];
     int offset = 0;
     offset = zzUnpackTrans(ZZ_TRANS_PACKED_0, offset, result);
     return result;
@@ -157,11 +158,11 @@ public class Numeros {
   private static final int [] ZZ_ATTRIBUTE = zzUnpackAttribute();
 
   private static final String ZZ_ATTRIBUTE_PACKED_0 =
-    "\4\0\1\11\1\1\1\11\2\1\3\11\1\1\1\11"+
-    "\2\1\3\0\1\1";
+    "\4\0\1\11\1\1\1\11\3\1\3\11\3\1\1\11"+
+    "\3\1\2\0\2\1";
 
   private static int [] zzUnpackAttribute() {
-    int [] result = new int[20];
+    int [] result = new int[24];
     int offset = 0;
     offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result);
     return result;
@@ -495,6 +496,62 @@ public class Numeros {
     while (true) {
       zzMarkedPosL = zzMarkedPos;
 
+      boolean zzR = false;
+      int zzCh;
+      int zzCharCount;
+      for (zzCurrentPosL = zzStartRead  ;
+           zzCurrentPosL < zzMarkedPosL ;
+           zzCurrentPosL += zzCharCount ) {
+        zzCh = Character.codePointAt(zzBufferL, zzCurrentPosL, zzMarkedPosL);
+        zzCharCount = Character.charCount(zzCh);
+        switch (zzCh) {
+        case '\u000B':
+        case '\u000C':
+        case '\u0085':
+        case '\u2028':
+        case '\u2029':
+          yyline++;
+          yycolumn = 0;
+          zzR = false;
+          break;
+        case '\r':
+          yyline++;
+          yycolumn = 0;
+          zzR = true;
+          break;
+        case '\n':
+          if (zzR)
+            zzR = false;
+          else {
+            yyline++;
+            yycolumn = 0;
+          }
+          break;
+        default:
+          zzR = false;
+          yycolumn += zzCharCount;
+        }
+      }
+
+      if (zzR) {
+        // peek one character ahead if it is \n (if we have counted one line too much)
+        boolean zzPeek;
+        if (zzMarkedPosL < zzEndReadL)
+          zzPeek = zzBufferL[zzMarkedPosL] == '\n';
+        else if (zzAtEOF)
+          zzPeek = false;
+        else {
+          boolean eof = zzRefill();
+          zzEndReadL = zzEndRead;
+          zzMarkedPosL = zzMarkedPos;
+          zzBufferL = zzBuffer;
+          if (eof) 
+            zzPeek = false;
+          else 
+            zzPeek = zzBufferL[zzMarkedPosL] == '\n';
+        }
+        if (zzPeek) yyline--;
+      }
       zzAction = -1;
 
       zzCurrentPosL = zzCurrentPos = zzStartRead = zzMarkedPosL;
@@ -564,44 +621,52 @@ public class Numeros {
           case 1: 
             { 
             }
-          case 11: break;
+          case 13: break;
           case 2: 
             { //System.out.println("Encontre un espacio");
             }
-          case 12: break;
+          case 14: break;
           case 3: 
+            { System.out.println("Error: "+yytext()+ " Linea: "+yyline+" Columna: "+yycolumn );
+            }
+          case 15: break;
+          case 4: 
             { System.out.println("Encontre un numero "+yytext());
                     contador.addDecimal();
             }
-          case 13: break;
-          case 4: 
+          case 16: break;
+          case 5: 
             { yybegin(LETRA);
             }
-          case 14: break;
-          case 5: 
+          case 17: break;
+          case 6: 
             { yybegin(HEXA);
             }
-          case 15: break;
-          case 6: 
+          case 18: break;
+          case 7: 
             { System.out.print(yytext());
             }
-          case 16: break;
-          case 7: 
-            { yybegin(YYINITIAL);
-            }
-          case 17: break;
-          case 8: 
-            { System.out.println("Encontre un texto "+yytext());
-            }
-          case 18: break;
-          case 9: 
-            { System.out.println("Número incorrecto: "+yytext());
-            }
           case 19: break;
-          case 10: 
-            { System.out.println("Encontre un hexa "+yytext());
+          case 8: 
+            { System.out.println("Error: "+yytext()+ " Linea: "+yyline+" Columna: "+yycolumn );
             }
           case 20: break;
+          case 9: 
+            { System.out.println("Error: "+yytext()+ " Linea: "+yyline+" Columna: "+yycolumn );
+            }
+          case 21: break;
+          case 10: 
+            { yybegin(YYINITIAL);
+            }
+          case 22: break;
+          case 11: 
+            { System.out.println("Encontre un texto "+yytext());
+            }
+          case 23: break;
+          case 12: 
+            { System.out.println("Encontre un hexa "+yytext());
+            }
+          case 24: break;
           default:
             zzScanError(ZZ_NO_MATCH);
         }

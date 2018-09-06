@@ -5,7 +5,8 @@ package lexico;
 %class Numeros
 %unicode
 %public
-
+%line
+%column
 %standalone
 
 %init{
@@ -43,10 +44,7 @@ SaltoDaH = \{
             }
 <YYINITIAL>
 {
-    {NoDecimal}
-                {
-                    System.out.println("Número incorrecto: "+yytext());
-                }
+    
     {Decimal}   {
                     System.out.println("Encontre un numero "+yytext());
                     contador.addDecimal();
@@ -54,20 +52,41 @@ SaltoDaH = \{
     {SaltoDaH}  {
                 yybegin(HEXA);
                 }
+    {Hexadecimal}
+                { System.out.println("Error: "+yytext()+ " Linea: "+yyline+" Columna: "+yycolumn );}
+    {Texto} {
+                System.out.println("Error: "+yytext()+ " Linea: "+yyline+" Columna: "+yycolumn ););
+               }
     {SaltoIaL}
                 {
                 yybegin(LETRA);
                 } 
 
 }
-<LETRA> {Texto} {
+<LETRA> { 
+
+        {Texto} {
                 System.out.println("Encontre un texto "+yytext());
                }
+        {Hexadecimal}
+                { System.out.println("Error: "+yytext()+ " Linea: "+yyline+" Columna: "+yycolumn );}
+    {Decimal} {
+                System.out.println("Error: "+yytext()+ " Linea: "+yyline+" Columna: "+yycolumn ););
+               }
+}
 <LETRA> {SaltoLaI} {
                     yybegin(YYINITIAL);
                    }
-<HEXA> {Hexadecimal}
+<HEXA> {
+         {Hexadecimal}
                 { System.out.println("Encontre un hexa "+yytext());}
+        {Decimal}
+                { System.out.println("Error: "+yytext()+ " Linea: "+yyline+" Columna: "+yycolumn );}
+         {Texto} {
+                System.out.println("Error: "+yytext()+ " Linea: "+yyline+" Columna: "+yycolumn ));
+                }
+
+}
 <HEXA> {SaltoHaD} {
                 yybegin(YYINITIAL);
                 }
